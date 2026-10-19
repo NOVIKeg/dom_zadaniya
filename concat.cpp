@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstddef>
+#include <limits>
 
 int ** concat_rows(
     const int * const * lhs, size_t n1, size_t m1,
@@ -23,6 +24,13 @@ int ** concat_rows(
         bool has_lhs = (i < n1);
         bool has_rhs = (i < n2);
         if (has_lhs && has_rhs) {
+            if (m1 > std::numeric_limits<size_t>::max() - m2) {
+                for (size_t j = 0; j < i; ++j) {
+                    delete[] result[j];
+                }
+                delete[] result;
+                return nullptr;
+            }
             len = m1 + m2;
         } else if (has_lhs) {
             len = m1;
